@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.Graphics.*;
+import java.io.*;
+import java.net.*;
 
 public class Servidor{
 
@@ -42,19 +44,42 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
      }
 
      public void mouseDragged(MouseEvent e){
+
           Graphics g = this.getGraphics();
           x = e.getX();
           y = e.getY();
           g.fillOval(e.getX()-radio, e.getY()-radio, 2*radio, 2*radio);
           g.dispose();
+          enviar();
+
      }
      
      public void mouseClicked(MouseEvent e) {
+
           Graphics g = this.getGraphics();
           x = e.getX();
           y = e.getY();
           g.fillOval(e.getX()-radio, e.getY()-radio, 2*radio, 2*radio);
           g.dispose();
+          enviar();
+
+     }
+
+     public void enviar(){
+
+          try{ 
+
+               Socket s = new Socket("192.168.1.100", 9999);
+               DataOutputStream sX = new DataOutputStream(s.getOutputStream());
+               DataOutputStream sY = new DataOutputStream(s.getOutputStream());
+               sX.writeInt(x);
+               sY.writeInt(y);
+               s.close();
+
+          }catch(IOException e){
+               //System.out.println("Error de IO enviando.");
+          }
+
      }
 
      public void mouseMoved(MouseEvent e){}
