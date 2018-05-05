@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.*;
 import java.awt.Graphics.*;
 import java.io.*;
 import java.net.*;
@@ -33,38 +34,48 @@ class frameServidor extends JFrame{
 
 class panelServidor extends JPanel implements MouseMotionListener, MouseListener{
 
-     public int x, y;
-     private final int radio = 2;
+     public int x, y, x1, y1;
      
      public panelServidor(){
 
+          x = x1 = y = y1 = -1;
           addMouseMotionListener(this);
           addMouseListener(this);
+          
+     }
+
+     public void pintar(Graphics g){
+
+          Graphics2D g2 = (Graphics2D) g;
+          g2.setStroke(new BasicStroke(2));
+          g2.setColor(Color.black);
+
+          if(x != -1 && x1 != -1 && y != -1 && y1 != -1){
+               g2.drawLine(x, y, x1, y1);
+          }
+          
+     }
+
+     public void mousePressed(MouseEvent e) {
+
+          x = x1 = e.getX();
+          y = y1 = e.getY();
+          pintar(this.getGraphics());
+          enviar();
 
      }
 
      public void mouseDragged(MouseEvent e){
 
-          Graphics g = this.getGraphics();
-          x = e.getX();
-          y = e.getY();
-          g.fillOval(e.getX()-radio, e.getY()-radio, 2*radio, 2*radio);
-          g.dispose();
+          x1 = e.getX();
+          y1 = e.getY();
+          pintar(this.getGraphics());
+          x = x1;
+          y = y1;
           enviar();
 
      }
      
-     public void mouseClicked(MouseEvent e) {
-
-          Graphics g = this.getGraphics();
-          x = e.getX();
-          y = e.getY();
-          g.fillOval(e.getX()-radio, e.getY()-radio, 2*radio, 2*radio);
-          g.dispose();
-          enviar();
-
-     }
-
      public void enviar(){
 
           try{ 
@@ -83,7 +94,7 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
      }
 
      public void mouseMoved(MouseEvent e){}
-     public void mousePressed(MouseEvent e) {}
+     public void mouseClicked(MouseEvent e) {}
      public void mouseReleased(MouseEvent e) {}
      public void mouseEntered(MouseEvent e) {}
      public void mouseExited(MouseEvent e) {}

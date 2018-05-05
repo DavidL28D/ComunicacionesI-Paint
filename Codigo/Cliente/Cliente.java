@@ -33,13 +33,26 @@ class frameCliente extends JFrame{
 
 class panelCliente extends JPanel implements Runnable{
 
-     private final int radio = 2;
+     public int x, y, x1, y1;
 
      public panelCliente(){
 
+          x = x1 = y = y1 = -1;
           Thread hilo = new Thread(this);
           hilo.start();
           
+     }
+
+     public void pintar(Graphics g){
+
+          Graphics2D g2 = (Graphics2D) g;
+          g2.setStroke(new BasicStroke(2));
+          g2.setColor(Color.black);
+
+          if(x != -1 && x1 != -1 && y != -1 && y1 != -1){
+               g2.drawLine(x, y, x1, y1);
+          }
+
      }
 
      @Override
@@ -54,12 +67,12 @@ class panelCliente extends JPanel implements Runnable{
                DataInputStream eX = new DataInputStream(s.getInputStream()); 
                DataInputStream eY = new DataInputStream(s.getInputStream());
 
-               int x = eX.readInt();
-               int y = eY.readInt();
+               x = eX.readInt();
+               y = eY.readInt();
+               pintar(getGraphics());
+               x1 = x;
+               y1 = y;
 
-               Graphics g = this.getGraphics();
-               g.fillOval(x-radio, y-radio, 2*radio, 2*radio);
-               g.dispose();
                s.close();
 
                }
