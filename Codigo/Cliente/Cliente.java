@@ -66,12 +66,18 @@ class panelCliente extends JPanel implements Runnable{
                Socket s = ss.accept();
                DataInputStream eX = new DataInputStream(s.getInputStream()); 
                DataInputStream eY = new DataInputStream(s.getInputStream());
+               
+               if(x1==-1 && y1==-1){
+                    x = x1 = eX.readInt();
+                    y = y1 = eY.readInt();
+               }else{
+                    x1 = eX.readInt();
+                    y1 = eY.readInt();
+               }
 
-               x = eX.readInt();
-               y = eY.readInt();
                pintar(getGraphics());
-               x1 = x;
-               y1 = y;
+               x=x1;
+               y=y1;
 
                s.close();
 

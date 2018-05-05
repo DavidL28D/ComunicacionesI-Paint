@@ -15,6 +15,8 @@ public class Servidor{
           Scanner escaner = new Scanner (System.in);
           String IP = escaner.nextLine ();
           
+          //String IP = "192.168.1.100";
+          
           frameServidor frame = new frameServidor(IP);
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
           frame.setResizable(false);
@@ -83,6 +85,12 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
           enviar();
 
      }
+
+     public void mouseReleased(MouseEvent e) {
+          x=-1;
+          y=-1;
+          enviar();
+     }
      
      public void enviar(){
 
@@ -103,7 +111,6 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
 
      public void mouseMoved(MouseEvent e){}
      public void mouseClicked(MouseEvent e) {}
-     public void mouseReleased(MouseEvent e) {}
      public void mouseEntered(MouseEvent e) {}
      public void mouseExited(MouseEvent e) {}
 
