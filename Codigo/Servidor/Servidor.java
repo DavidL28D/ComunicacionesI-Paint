@@ -1,3 +1,4 @@
+import java.util.Scanner;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,22 +10,26 @@ import java.net.*;
 public class Servidor{
 
      public static void main(String args[]){
-
-          frameServidor frame = new frameServidor();
+          
+          System.out.print("Ingresa la direccion ip: ");
+          Scanner escaner = new Scanner (System.in);
+          String IP = escaner.nextLine ();
+          
+          frameServidor frame = new frameServidor(IP);
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
           frame.setResizable(false);
-
+          
      }
 
 }
 
 class frameServidor extends JFrame{
 
-     public frameServidor(){
+     public frameServidor(String IP){
 
           setTitle("Servidor - Lienzo");
           setBounds(400, 400, 400, 400);
-		panelServidor panel = new panelServidor();
+		panelServidor panel = new panelServidor(IP);
 		add(panel);
 		setVisible(true);
 
@@ -35,12 +40,15 @@ class frameServidor extends JFrame{
 class panelServidor extends JPanel implements MouseMotionListener, MouseListener{
 
      public int x, y, x1, y1;
+     private String IP;
      
-     public panelServidor(){
+     public panelServidor(String IP){
 
+          this.IP = IP;
           x = x1 = y = y1 = -1;
           addMouseMotionListener(this);
           addMouseListener(this);
+          System.out.println ("Conectado con... " + this.IP);
           
      }
 
@@ -80,7 +88,7 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
 
           try{ 
 
-               Socket s = new Socket("192.168.1.100", 9999);
+               Socket s = new Socket(this.IP, 9999);
                DataOutputStream sX = new DataOutputStream(s.getOutputStream());
                DataOutputStream sY = new DataOutputStream(s.getOutputStream());
                sX.writeInt(x);
