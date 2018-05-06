@@ -11,13 +11,7 @@ public class Servidor{
 
      public static void main(String args[]){
           
-          System.out.print("Ingresa la direccion ip: ");
-          Scanner escaner = new Scanner (System.in);
-          String IP = escaner.nextLine ();
-          
-          //String IP = "192.168.1.100";
-          
-          frameServidor frame = new frameServidor(IP);
+          frameServidor frame = new frameServidor();
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
           frame.setResizable(false);
           
@@ -27,11 +21,11 @@ public class Servidor{
 
 class frameServidor extends JFrame{
 
-     public frameServidor(String IP){
+     public frameServidor(){
 
           setTitle("Servidor - Lienzo");
           setBounds(400, 400, 400, 400);
-		panelServidor panel = new panelServidor(IP);
+		panelServidor panel = new panelServidor();
 		add(panel);
 		setVisible(true);
 
@@ -39,19 +33,26 @@ class frameServidor extends JFrame{
 
 }
 
-class panelServidor extends JPanel implements MouseMotionListener, MouseListener{
+class panelServidor extends JPanel implements MouseMotionListener, MouseListener, Runnable{
 
-     public int x, y, x1, y1;
-     private String IP;
+     int x, y, x1, y1;
+     boolean flag;
+
+     ServerSocket ss;
+     Socket s;
+     DataOutputStream sX, sY;
      
-     public panelServidor(String IP){
+     public panelServidor(){
 
-          this.IP = IP;
           x = x1 = y = y1 = -1;
+          flag = false;
+
           addMouseMotionListener(this);
           addMouseListener(this);
-          System.out.println ("Conectado con... " + this.IP);
-          
+
+          Thread hilo = new Thread(this);
+          hilo.start();
+
      }
 
      public void pintar(Graphics g){
@@ -60,9 +61,12 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
           g2.setStroke(new BasicStroke(2));
           g2.setColor(Color.black);
 
-          if(x != -1 && x1 != -1 && y != -1 && y1 != -1){
-               g2.drawLine(x, y, x1, y1);
+          if(flag){
+               if(x != -1 && x1 != -1 && y != -1 && y1 != -1){
+                    g2.drawLine(x, y, x1, y1);
+               }
           }
+          
           
      }
 
@@ -87,31 +91,47 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
      }
 
      public void mouseReleased(MouseEvent e) {
-          x=-1;
-          y=-1;
+          x = -1;
+          y = -1;
           enviar();
      }
      
-     public void enviar(){
-
-          try{ 
-
-               Socket s = new Socket(this.IP, 9999);
-               DataOutputStream sX = new DataOutputStream(s.getOutputStream());
-               DataOutputStream sY = new DataOutputStream(s.getOutputStream());
-               sX.writeInt(x);
-               sY.writeInt(y);
-               s.close();
-
-          }catch(IOException e){
-               //System.out.println("Error de IO enviando.");
-          }
-
-     }
-
      public void mouseMoved(MouseEvent e){}
      public void mouseClicked(MouseEvent e) {}
      public void mouseEntered(MouseEvent e) {}
      public void mouseExited(MouseEvent e) {}
+
+     public void enviar(){  
+
+          try{
+               
+               sX = new DataOutputStream(s.getOutputStream());
+               sY = new DataOutputStream(s.getOutputStream());
+               sX.writeInt(x);
+               sY.writeInt(y);
+               
+          }catch(IOException e){
+               //System.out.println("Error en el ServerSocket.");
+          }
+
+     }
+
+     @Override
+     public void run(){
+
+          try{
+               
+               ss = new ServerSocket(6666);
+               System.out.println("Servidor encendido.");
+
+               s = ss.accept();
+               System.out.println("Conectado a Cliente.");
+               flag = true;
+
+          }catch(IOException e){
+               //System.out.println("Error en el ServerSocket.");
+          }
+
+     }
 
 }

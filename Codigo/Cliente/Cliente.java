@@ -33,11 +33,16 @@ class frameCliente extends JFrame{
 
 class panelCliente extends JPanel implements Runnable{
 
-     public int x, y, x1, y1;
+     int x, y, x1, y1;
+
+     Socket s;
+     DataInputStream eX, eY;
+
 
      public panelCliente(){
 
           x = x1 = y = y1 = -1;
+
           Thread hilo = new Thread(this);
           hilo.start();
           
@@ -58,35 +63,34 @@ class panelCliente extends JPanel implements Runnable{
      @Override
      public void run(){
 
-          try{
-               
-               ServerSocket ss = new ServerSocket(9999);
+          try{ 
+
+               s = new Socket("192.168.1.100", 6666);
+               System.out.println("Conectado a Servidor.");
+
                while(true){
 
-               Socket s = ss.accept();
-               DataInputStream eX = new DataInputStream(s.getInputStream()); 
-               DataInputStream eY = new DataInputStream(s.getInputStream());
+                    eX = new DataInputStream(s.getInputStream()); 
+                    eY = new DataInputStream(s.getInputStream());
+
+                    if(x1 == -1 && y1 == -1){
+                         x = x1 = eX.readInt();
+                         y = y1 = eY.readInt();
+                    }else{
+                         x1 = eX.readInt();
+                         y1 = eY.readInt();
+                    }
+
+                    pintar(getGraphics());
+                    x = x1;
+                    y = y1;
+
+               }
                
-               if(x1==-1 && y1==-1){
-                    x = x1 = eX.readInt();
-                    y = y1 = eY.readInt();
-               }else{
-                    x1 = eX.readInt();
-                    y1 = eY.readInt();
-               }
-
-               pintar(getGraphics());
-               x=x1;
-               y=y1;
-
-               s.close();
-
-               }
-
           }catch(IOException e){
-               //System.out.println("Error de IO recibiendo.");
+               //System.out.println("Error en conectar Cliente.");
           }
 
-     }
+     } 
 
 }
