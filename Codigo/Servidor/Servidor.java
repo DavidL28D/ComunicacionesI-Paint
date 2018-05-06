@@ -47,8 +47,10 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
           x = x1 = y = y1 = -1;
           flag = false;
 
+          setLayout(null);
           addMouseMotionListener(this);
           addMouseListener(this);
+          
 
           Thread hilo = new Thread(this);
           hilo.start();
@@ -103,16 +105,22 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
 
      public void enviar(){  
 
-          try{
+          if(flag){
+
+               try{
                
-               sX = new DataOutputStream(s.getOutputStream());
-               sY = new DataOutputStream(s.getOutputStream());
-               sX.writeInt(x);
-               sY.writeInt(y);
+                    sX = new DataOutputStream(s.getOutputStream());
+                    sY = new DataOutputStream(s.getOutputStream());
+                    sX.writeInt(x);
+                    sY.writeInt(y);
+                    
+               }catch(IOException e){
+                    //System.out.println("Error en el ServerSocket.");
+               }
                
-          }catch(IOException e){
-               //System.out.println("Error en el ServerSocket.");
           }
+
+          
 
      }
 
@@ -122,10 +130,17 @@ class panelServidor extends JPanel implements MouseMotionListener, MouseListener
           try{
                
                ss = new ServerSocket(6666);
-               System.out.println("Servidor encendido.");
+               //System.out.println("Servidor encendido.");
+
+               JLabel label = new JLabel();
+               label.setText("Esperando Cliente...");
+               label.setBounds(140, 160, 300, 30);
+               add(label);
 
                s = ss.accept();
-               System.out.println("Conectado a Cliente.");
+               //System.out.println("Conectado a Cliente.");
+               removeAll();
+               repaint();
                flag = true;
 
           }catch(IOException e){

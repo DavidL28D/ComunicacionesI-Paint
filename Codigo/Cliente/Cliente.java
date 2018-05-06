@@ -31,9 +31,11 @@ class frameCliente extends JFrame{
 
 }
 
+
 class panelCliente extends JPanel implements Runnable{
 
      int x, y, x1, y1;
+     String IP_ADRESS;
 
      Socket s;
      DataInputStream eX, eY;
@@ -43,9 +45,48 @@ class panelCliente extends JPanel implements Runnable{
 
           x = x1 = y = y1 = -1;
 
+          setLayout(null);
+          JButton boton = new JButton();
+          JLabel label = new JLabel();
+          JTextField texto = new JTextField(15);
+          
+          label.setText("Ingresar la direccion IP del servidor");
+          boton.setText("Aceptar");
+          
+          label.setBounds(100, 120, 300, 30);
+          texto.setBounds(130, 160, 140, 30);
+          boton.setBounds(140, 220, 120, 40);
+
+          add(label);
+          add(texto);
+          add(boton);
+
+          boton.addActionListener(new ActionListener(){
+
+               @Override
+               public void actionPerformed(ActionEvent arg0){
+
+                    if(texto.getText().isEmpty()){
+                         JOptionPane.showMessageDialog(null, "IP requerida.");
+
+                    }else{
+                         
+                         IP_ADRESS = texto.getText();
+                         removeAll();
+                         repaint();
+                         cargar();
+                         
+                    }
+
+               }
+
+          });
+
+     }
+
+     public void cargar(){
           Thread hilo = new Thread(this);
           hilo.start();
-          
      }
 
      public void pintar(Graphics g){
@@ -65,8 +106,7 @@ class panelCliente extends JPanel implements Runnable{
 
           try{ 
 
-               s = new Socket("192.168.1.100", 6666);
-               System.out.println("Conectado a Servidor.");
+               s = new Socket(IP_ADRESS, 6666);
 
                while(true){
 
